@@ -65,6 +65,7 @@ const StepTwo = ({ step, setStep }: StepTwoProps) => {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
+    setStep(step + 1);
   };
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-gray-100 border-2 border-red-500">
