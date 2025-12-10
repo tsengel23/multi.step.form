@@ -26,21 +26,62 @@ import { z } from "zod";
 import { Header } from "./Header";
 import { Dispatch, SetStateAction } from "react";
 import { motion } from "framer-motion";
+// import { motion } from "motion/react";
 
 //3-n input-tei. input tus buriin shalgalt ni "iim bh yostoi gsn" shalgaltaa bas bichlee
 const formSchema = z.object({
   firstname: z
     .string()
-    .min(5, "First name cannot contain special characters or numbers")
-    .max(30),
+    .min(2, "Нэр хамгийн багадаа 2 тэмдэгт байх ёстой")
+    .max(50, "Нэр хамгийн ихдээ 50 тэмдэгт байх ёстой")
+    .regex(
+      /^[a-zA-ZА-Яа-яёЁ\s\-']+$/,
+      "Зөвхөн үсэг, зураас, апостроф зөвшөөрнө"
+    )
+    .trim()
+    // .refine((val) => val.charAt(0) === val.charAt(0).toUpperCase(), {
+    //   message: "Нэрийн эхний үсэг томоор бичнэ үү. Жишээ: 'бат' биш 'Бат'",
+    // }),
+    .transform((val) => {
+      if (!val) return val;
+      return val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+    }),
+
   lastname: z
     .string()
-    .min(5, "Last name cannot contain special characters or numbers")
-    .max(30),
+    .min(2, "Нэр хамгийн багадаа 2 тэмдэгт байх ёстой")
+    .max(50, "Нэр хамгийн ихдээ 50 тэмдэгт байх ёстой")
+    .regex(
+      /^[a-zA-ZА-Яа-яёЁ\s\-']+$/,
+      "Зөвхөн үсэг, зураас, апостроф зөвшөөрнө"
+    )
+    .trim()
+
+    .transform((val) => {
+      if (!val) return val;
+
+      return val
+        .toLowerCase()
+        .split(/\s+/) // Зайгаар хуваах
+        .map((word) => {
+          // Хэрэв үг нь зураас агуулж байвал
+          if (word.includes("-")) {
+            return word
+              .split("-")
+              .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+              .join("-");
+          }
+          // Энгийн үг
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" ");
+    }),
   username: z
     .string()
-    .min(5, "User name cannot contain special characters or numbers")
-    .max(30),
+    .min(2, "Нэр хамгийн багадаа 2 тэмдэгт байх ёстой")
+    .max(50, "Нэр хамгийн ихдээ 50 тэмдэгт байх ёстой")
+
+    .trim(),
 });
 
 type FormSchemaType = z.infer<typeof formSchema>;
@@ -61,17 +102,34 @@ const StepOne = ({ step, setStep }: StepOneProps) => {
     },
   });
 
-  // export default function MultiStepForm() {
-  //   return <div></div>;
-  // }
-
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
     setStep(step + 1);
   };
 
   return (
-    <motion.div>
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      exit={{
+        opacity: 0,
+        y: -20,
+      }}
+      transition={{
+        duration: 0.5,
+        ease: "easeInOut",
+      }}
+      style={{
+        position: "absolute",
+        width: "100%",
+      }}
+    >
       <div className="w-screen h-screen flex justify-center items-center bg-gray-100 border-2 border-red-500">
         <Card className="w-120 p-8 ">
           <div className=" ">
@@ -136,7 +194,7 @@ const StepOne = ({ step, setStep }: StepOneProps) => {
                 </div>
                 <div className=" mt-[162px]">
                   <Button type="submit" className=" w-104 flex-1">
-                    Continue <span>1</span>/3
+                    Continue <span>1</span>/ 3
                   </Button>
                 </div>
               </form>
