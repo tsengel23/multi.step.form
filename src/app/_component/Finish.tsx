@@ -3,9 +3,26 @@ import { motion } from "framer-motion";
 export const Finish = () => {
   return (
     <motion.div
-      initial={{ x: 300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: -300, opacity: 0 }}
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      exit={{
+        opacity: 0,
+        y: -20,
+      }}
+      transition={{
+        duration: 0.5,
+        ease: "easeInOut",
+      }}
+      style={{
+        position: "absolute",
+        width: "100%",
+      }}
     >
       <div className="flex flex-col ">
         <img src="/Main 1.svg" className="w-15 h-15" />

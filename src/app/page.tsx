@@ -11,7 +11,7 @@ const Formpage = () => {
   const [step, setStep] = useState(1);
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-gray-100">
+    <div>
       <AnimatePresence>
         {step === 1 && <StepOne step={step} setStep={setStep} />}
       </AnimatePresence>

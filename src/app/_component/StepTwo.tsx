@@ -22,10 +22,10 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { Header } from "./Header";
-import { ChevronLeft } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+import { ChevronLeft, Eye, EyeOff } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import { motion } from "framer-motion";
 
@@ -94,6 +94,9 @@ const StepTwo = ({ step, setStep }: StepTwoProps) => {
       confirmPassword: "",
     },
   });
+
+  const [see1, setSee1] = useState<boolean>(true);
+  const [see2, setSee2] = useState<boolean>(true);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
@@ -177,7 +180,23 @@ const StepTwo = ({ step, setStep }: StepTwoProps) => {
                           Password<span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="your password . . ." {...field} />
+                          <div className="relative">
+                            <Input
+                              type={see1 ? "password" : "text"}
+                              placeholder="your password . . ."
+                              {...field}
+                            />
+                            <Button
+                              variant={"secondary"}
+                              type="button"
+                              className="w-7 h-7 rounded-full bg-white text-black border-1 border-black p-0 absolute top-1 right-1"
+                              onClick={() => {
+                                setSee1(!see1);
+                              }}
+                            >
+                              {see1 ? <Eye /> : <EyeOff />}
+                            </Button>
+                          </div>
                         </FormControl>
                         <FormDescription></FormDescription>
                         <FormMessage />
@@ -194,7 +213,23 @@ const StepTwo = ({ step, setStep }: StepTwoProps) => {
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="confirm it . . ." {...field} />
+                          <div className="relative">
+                            <Input
+                              type={see2 ? "password" : "text"}
+                              placeholder="confirm it . . ."
+                              {...field}
+                            />
+                            <Button
+                              variant={"secondary"}
+                              type="button"
+                              className="w-7 h-7 rounded-full bg-white text-black border-1  border-black  p-0 absolute top-1 right-1"
+                              onClick={() => {
+                                setSee2(!see2);
+                              }}
+                            >
+                              {see2 ? <Eye /> : <EyeOff />}
+                            </Button>
+                          </div>
                         </FormControl>
                         <FormDescription></FormDescription>
                         <FormMessage />

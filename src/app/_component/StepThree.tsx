@@ -24,10 +24,15 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 import { Header } from "./Header";
-import { ChevronLeft } from "lucide-react";
-import { date } from "zod/v4-mini";
+import { Calendar, ChevronDownIcon, ChevronLeft } from "lucide-react";
+// import { date } from "zod/v4-mini";
 import { motion } from "framer-motion";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
 
 //3-n input-tei. input tus buriin shalgalt ni "iim bh yostoi gsn" shalgaltaa bas bichlee
 const formSchema = z.object({
@@ -40,15 +45,16 @@ const formSchema = z.object({
       const age = today.getFullYear() - date.getFullYear();
       return age >= 18;
     }, "18-аас дээш нас байх ёстой"),
-  image: z
-  .file()
-  .optional(),
+  image: z.file().optional(),
 });
 
 type StepThreeProps = {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
 };
+// date-iig oruulj irhiin tuld edgeer huvisagchiig zarlaj ogdog.(shadcn-ni: Date of Birth Picker)
+const [open, setOpen] = useState(false);
+const [date, setDate] = useState<Date | undefined>(undefined);
 
 type FormSchemaType = z.infer<typeof formSchema>;
 // resolver gedeg deer ene shalgaltuudiigavah yostoi shuu gedgee tavij ogdog
@@ -56,8 +62,8 @@ const StepThree = ({ step, setStep }: StepThreeProps) => {
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      birthday: 
-      image:
+      // birthday:
+      // image: "",   ed nar deer "utga" tavih hereggui anhnii utga ni undifined bdg bolhoor!!!!
     },
   });
 
@@ -111,7 +117,34 @@ const StepThree = ({ step, setStep }: StepThreeProps) => {
                           Date of birth<span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="yyyy.mm.dd" {...field} />
+                          <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                id="date"
+                                className="w-48 justify-between font-normal"
+                              >
+                                {date
+                                  ? date.toLocaleDateString()
+                                  : "Select date"}
+                                <ChevronDownIcon />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto overflow-hidden p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={date}
+                                captionLayout="dropdown"
+                                onSelect={(date) => {
+                                  setDate(date);
+                                  setOpen(false);
+                                }}
+                              />
+                            </PopoverContent>
+                          </Popover>
                         </FormControl>
                         <FormDescription></FormDescription>
                         <FormMessage />
@@ -157,9 +190,3 @@ const StepThree = ({ step, setStep }: StepThreeProps) => {
   );
 };
 export default StepThree;
-
-
-
-
-
-
