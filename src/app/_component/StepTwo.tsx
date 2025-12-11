@@ -28,6 +28,7 @@ import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 
 import { motion } from "framer-motion";
+import { Data } from "../page";
 
 //3-n input-tei. input tus buriin shalgalt ni "iim bh yostoi gsn" shalgaltaa bas bichlee
 const formSchema = z
@@ -44,7 +45,7 @@ const formSchema = z
     //   const exists = await checkEmailExists(email);
     //   return !exists;
     // }, "Энэ имэйл аль хэдийн бүртгэгдсэн байна"),
-    phoneNumber: z
+    phone: z
       .string()
       .regex(
         /^[0-9+\-\s()]+$/,
@@ -65,7 +66,7 @@ const formSchema = z
       .regex(/[A-Z]/, "Дор хаяж 1 том үсэг агуулна")
       .regex(/[a-z]/, "Дор хаяж 1 жижиг үсэг агуулна")
       .regex(/[0-9]/, "Дор хаяж 1 тоо агуулна")
-      .regex(/[@$!%*?&]/, "Дор хаяж 1 тусгай тэмдэгт агуулна (@$!%*?&)")
+      .regex(/[@$!%*?&#]/, "Дор хаяж 1 тусгай тэмдэгт агуулна (@$!%*?&)")
       .refine(
         (val) => !val.includes("123"),
         "123 гэх энгийн дарааллыг хэрэглэхгүй"
@@ -83,15 +84,17 @@ type FormSchemaType = z.infer<typeof formSchema>;
 type StepTwoProps = {
   step: number;
   setStep: Dispatch<SetStateAction<number>>;
+  data: Data;
+  setData: Dispatch<SetStateAction<Data>>;
 };
-const StepTwo = ({ step, setStep }: StepTwoProps) => {
+const StepTwo = ({ step, setStep, data, setData }: StepTwoProps) => {
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      phoneNumber: "",
-      password: "",
-      confirmPassword: "",
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
     },
   });
 
@@ -99,6 +102,13 @@ const StepTwo = ({ step, setStep }: StepTwoProps) => {
   const [see2, setSee2] = useState<boolean>(true);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    setData((prev) => ({
+      ...prev,
+      email: values.email,
+      phone: values.phone,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+    }));
     console.log(values);
     setStep(step + 1);
   };
@@ -157,7 +167,7 @@ const StepTwo = ({ step, setStep }: StepTwoProps) => {
                   />
                   <FormField
                     control={form.control}
-                    name="phoneNumber"
+                    name="phone"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-semibold text-sm">
