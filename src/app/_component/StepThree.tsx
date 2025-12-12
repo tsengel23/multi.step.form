@@ -24,10 +24,15 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 import { Header } from "./Header";
-import { ChevronDownIcon, ChevronLeft, ImageIcon } from "lucide-react";
+import {
+  Calendar1,
+  ChevronDownIcon,
+  ChevronLeft,
+  ImageIcon,
+} from "lucide-react";
 // import { date } from "zod/v4-mini";
 import { motion } from "framer-motion";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -35,7 +40,7 @@ import {
 } from "@radix-ui/react-popover";
 import Image from "next/image";
 import { Calendar } from "@/components/ui/calendar";
-import { Data } from "../page";
+import { Data, StepContext } from "../page";
 
 //3-n input-tei. input tus buriin shalgalt ni "iim bh yostoi gsn" shalgaltaa bas bichlee
 const formSchema = z.object({
@@ -47,28 +52,30 @@ const formSchema = z.object({
       const today = new Date();
       const age = today.getFullYear() - date.getFullYear();
       return age >= 18;
-    }, "18-аас дээш нас байх ёстой"),
+    }, "Та 18-аас дээш настай байх ёстой"),
   profileImage: z.file("Файлаа ахин оруулна уу ?!").optional(),
 });
 
-type StepThreeProps = {
-  step: number;
-  setStep: Dispatch<SetStateAction<number>>;
-  data: Data;
-  setData: Dispatch<SetStateAction<Data>>;
-};
+// type StepThreeProps = {
+//   step: number;
+//   setStep: Dispatch<SetStateAction<number>>;
+//   data: Data;
+//   setData: Dispatch<SetStateAction<Data>>;
+// };
 // date-iig oruulj irhiin tuld edgeer huvisagchiig zarlaj ogdog.(shadcn-ni: Date of Birth Picker)
 
 type FormSchemaType = z.infer<typeof formSchema>;
 // resolver gedeg deer ene shalgaltuudiigavah yostoi shuu gedgee tavij ogdog
 
-const StepThree = ({ step, setStep, data, setData }: StepThreeProps) => {
+// const StepThree = ({ step, setStep, data, setData }: StepThreeProps) => {
+const StepThree = () => {
+  const { step, setStep, data, setData } = useContext(StepContext);
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  // const [date, setDate] = useState<Date | undefined>(undefined); <-----odoo ene date hereggui. bid bid date-ee   uun deer hadgalj bgaa uchraas birthday: data.birthday,
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // birthday:
+      birthday: data.birthday,
       // image: "",   ed nar deer "utga" tavih hereggui anhnii utga ni undifined bdg bolhoor!!!!
       // birthday: data.birthday,
       // profileImage: data.profileImage,
@@ -76,11 +83,10 @@ const StepThree = ({ step, setStep, data, setData }: StepThreeProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // setData((prev) => ({
-    //   ...prev,
-    //   birthday: values.birthday,
-    //   profileImage: values.profileImage,
-    // }));
+    setData((prev) => ({
+      ...prev,
+      birthday: values.birthday,
+    }));
     console.log(values);
     setStep(step + 1);
   };
@@ -131,24 +137,25 @@ const StepThree = ({ step, setStep, data, setData }: StepThreeProps) => {
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Popover open={open} onOpenChange={setOpen}>
+                          <Popover open={open} onOpenChange={setOpen} modal>
                             <PopoverTrigger asChild>
                               <Button
                                 variant="outline"
                                 id="date"
-                                className="w-48 justify-between font-normal"
+                                className="w-full justify-between font-normal"
                               >
                                 {field.value
                                   ? field.value.toLocaleDateString()
                                   : "--/--/--"}
-                                <ChevronDownIcon />
+                                <Calendar1 />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent
-                              className="w-auto overflow-hidden p-0"
-                              align="start"
+                              className="w-auto overflow-hidden p-0 z-20"
+                              align="center"
                             >
                               <Calendar
+                                className="border border-black bg-gray-100 rounded-xl w-80 h-100"
                                 mode="single"
                                 selected={field.value}
                                 captionLayout="dropdown"
@@ -171,7 +178,10 @@ const StepThree = ({ step, setStep, data, setData }: StepThreeProps) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-semibold text-sm">
-                          Profile image<span className="text-red-500">*</span>
+                          Profile image
+                          <span className="text-red-500 text-[9px]">
+                            (optional)
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
@@ -196,7 +206,7 @@ const StepThree = ({ step, setStep, data, setData }: StepThreeProps) => {
                                 />
                               </div>
                             )}
-                            <div className="w-full h-40 rounded-xl flex justify-center items-center bg-[#7f7f800d]">
+                            <div className="w-full h-80 rounded-xl flex justify-center items-center bg-[#7f7f800d]">
                               <div className="flex flex-col items-center gap-2">
                                 <ImageIcon className="text-[#8e8e8e]" />
                                 Add Image
@@ -210,7 +220,7 @@ const StepThree = ({ step, setStep, data, setData }: StepThreeProps) => {
                     )}
                   />
                 </div>
-                <div className=" mt-[162px] flex gap-2 ">
+                <div className=" mt-[100px] flex gap-2 ">
                   <Button
                     variant={"outline"}
                     type="button"

@@ -1,7 +1,23 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { ChevronLeft } from "lucide-react";
+import { Dispatch, SetStateAction, useContext } from "react";
+import { StepContext } from "../page";
+
+// type FinishProps = {
+//   step: number;
+//   setStep: Dispatch<SetStateAction<number>>;
+// };
+
+// export const Finish = ({ step, setStep }: FinishProps) => {
 export const Finish = () => {
+  const { step, setStep } = useContext(StepContext);
+  const goBack = () => {
+    setStep(step - 1);
+  };
+
   return (
     <motion.div
       initial={{
@@ -35,6 +51,20 @@ export const Finish = () => {
             <p className="text-lg text-[#8E8E8E] font-normal">
               We have received your submission. Thank you!
             </p>
+          </div>
+          <div className="flex gap-2 ">
+            <Button
+              variant={"default"}
+              type="button"
+              className="w-104 flex-1"
+              onClick={goBack}
+            >
+              <ChevronLeft />
+              Back
+            </Button>
+            {/* <Button variant="destructive" type="submit" className="">
+              Submit
+            </Button> */}
           </div>
         </Card>
       </div>

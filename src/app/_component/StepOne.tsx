@@ -24,9 +24,9 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 import { Header } from "./Header";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import { motion } from "framer-motion";
-import { Data } from "../page";
+import { Data, StepContext } from "../page";
 // import { motion } from "motion/react";
 
 //3-n input-tei. input tus buriin shalgalt ni "iim bh yostoi gsn" shalgaltaa bas bichlee
@@ -88,14 +88,16 @@ const formSchema = z.object({
 type FormSchemaType = z.infer<typeof formSchema>;
 // resolver gedeg deer ene shalgaltuudiigavah yostoi shuu gedgee tavij ogdog
 
-export type StepOneProps = {
-  step: number;
-  setStep: Dispatch<SetStateAction<number>>;
-  data: Data;
-  setData: Dispatch<SetStateAction<Data>>;
-};
+// export type StepOneProps = {
+//   step: number;
+//   setStep: Dispatch<SetStateAction<number>>;
+//   data: Data;
+//   setData: Dispatch<SetStateAction<Data>>;
+// };<---------odoo propsoor edgeeriig avdag bsnaa boliod "useContext" ashiglaad propsoor medeellee damjuulya
 
-const StepOne = ({ step, setStep, data, setData }: StepOneProps) => {
+// const StepOne = ({ step, setStep, data, setData }: StepOneProps) => {
+const StepOne = () => {
+  const { step, setStep, data, setData } = useContext(StepContext);
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {

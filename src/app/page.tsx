@@ -14,7 +14,9 @@ type StepContextType = {
   setData: Dispatch<SetStateAction<Data>>;
 };
 
-const StepContext = createContext<StepContextType>({} as StepContextType);
+export const StepContext = createContext<StepContextType>(
+  {} as StepContextType
+);
 
 export type Data = {
   firstname: string;
@@ -24,7 +26,7 @@ export type Data = {
   phone: string;
   password: string;
   confirmPassword: string;
-  birthday: Date | null;
+  birthday?: Date;
   profileImage: File | null;
 };
 
@@ -38,7 +40,6 @@ const Formpage = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    birthday: null,
     profileImage: null,
   });
 
@@ -48,34 +49,37 @@ const Formpage = () => {
         <AnimatePresence>
           {step === 1 && (
             <StepOne
-              step={step}
-              setStep={setStep}
-              data={data}
-              setData={setData}
+            // step={step}
+            // setStep={setStep}
+            // data={data}
+            // setData={setData} <------uuniigee odo ustgaj bolno ygd gevel useContext gedeg "hook" ashiglaj bgaa bolhoor negdsen jurmaar medeellee neg damjuulna
             />
           )}
         </AnimatePresence>
         <AnimatePresence>
           {step === 2 && (
             <StepTwo
-              step={step}
-              setStep={setStep}
-              data={data}
-              setData={setData}
+            // step={step}
+            // setStep={setStep}
+            // data={data}
+            // setData={setData} <------uuniigee odo ustgaj bolno ygd gevel useContext gedeg "hook" ashiglaj bgaa bolhoor negdsen jurmaar medeellee neg damjuulna
             />
           )}
         </AnimatePresence>
         <AnimatePresence>
           {step === 3 && (
             <StepThree
-              step={step}
-              setStep={setStep}
-              data={data}
-              setData={setData}
+            // step={step}
+            // setStep={setStep}
+            // data={data}
+            // setData={setData}
             />
           )}
         </AnimatePresence>
-        <AnimatePresence>{step === 4 && <Finish />}</AnimatePresence>
+        <AnimatePresence>
+          {/* {step === 4 && <Finish step={step} setStep={setStep} />}  <----uuniigee odo ustgaj bolno ygd gevel useContext gedeg "hook" ashiglaj bgaa bolhoor negdsen jurmaar medeellee neg damjuulna*/}
+          {step === 4 && <Finish />}
+        </AnimatePresence>
       </div>
     </StepContext.Provider>
   );
