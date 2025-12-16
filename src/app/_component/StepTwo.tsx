@@ -79,7 +79,7 @@ const formSchema = z
   });
 
 type FormSchemaType = z.infer<typeof formSchema>;
-// resolver gedeg deer ene shalgaltuudiigavah yostoi shuu gedgee tavij ogdog
+// resolver gedeg deer ene shalgaltuudiig avah yostoi shuu gedgee tavij ogdog
 
 // type StepTwoProps = {
 //   step: number;
