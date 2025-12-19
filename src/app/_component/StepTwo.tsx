@@ -201,7 +201,7 @@ const StepTwo = () => {
                             <Button
                               variant={"secondary"}
                               type="button"
-                              className="w-7 h-7 rounded-full bg-white text-black border-1 border-black p-0 absolute top-1 right-1"
+                              className="w-7 h-7 rounded-full bg-white text-black border border-black p-0 absolute top-1 right-1"
                               onClick={() => {
                                 setSee1(!see1);
                               }}
