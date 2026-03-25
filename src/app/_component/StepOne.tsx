@@ -37,7 +37,7 @@ const formSchema = z.object({
     .max(50, "Хамгийн ихдээ 50 тэмдэгт байх ёстой")
     .regex(
       /^[a-zA-ZА-Яа-яёЁ\s\-']+$/,
-      "Зөвхөн үсэг, зураас, апостроф зөвшөөрнө"
+      "Зөвхөн үсэг, зураас, апостроф зөвшөөрнө",
     )
     .trim()
     // .refine((val) => val.charAt(0) === val.charAt(0).toUpperCase(), {
@@ -54,7 +54,7 @@ const formSchema = z.object({
     .max(50, "Хамгийн ихдээ 50 тэмдэгт байх ёстой")
     .regex(
       /^[a-zA-ZА-Яа-яёЁ\s\-']+$/,
-      "Зөвхөн үсэг, зураас, апостроф зөвшөөрнө"
+      "Зөвхөн үсэг, зураас, апостроф зөвшөөрнө",
     )
     .trim()
 
@@ -141,7 +141,7 @@ const StepOne = () => {
         width: "100%",
       }}
     >
-      <div className="w-screen h-screen flex justify-center items-center bg-gray-100 border-2 border-red-500">
+      <div className="w-screen h-screen flex justify-center items-center bg-gray-100 ">
         <Card className="w-120 p-8 ">
           <div className=" ">
             <Form {...form}>
