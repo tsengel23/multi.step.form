@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, Dispatch, SetStateAction, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import StepOne from "./_component/StepOne";
 import StepTwo from "./_component/StepTwo";
 import StepThree from "./_component/StepThree";
@@ -30,6 +36,76 @@ export type Data = {
   profileImage: File | null;
 };
 
+// localStorage-д хадгалах key нэрс
+const STORAGE_KEY_DATA = "multi_step_form_data";
+const STORAGE_KEY_STEP = "multi_step_form_step";
+
+// localStorage-аас data уншина (Date-ийг parse хийнэ, File-ийг skip)
+
+const loadDataFromStorage = (): Data => {
+  const defaultData: Data = {
+    firstname: "",
+    lastname: "",
+    username: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    profileImage: null,
+  };
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_DATA);
+    if (!saved) return defaultData;
+
+    const parsed = JSON.parse(saved);
+
+    return {
+      ...defaultData,
+      ...parsed,
+      // birthday string байвал Date болгоно, байхгүй бол undefined
+      birthday: parsed.birthday ? new Date(parsed.birthday) : undefined,
+      // File object localStorage-д хадгалах боломжгүй тул null болгоно
+      profileImage: null,
+    };
+  } catch {
+    return defaultData;
+  }
+};
+
+// localStorage-аас step уншина
+const loadStepFromStorage = (): number => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_STEP);
+    if (!saved) return 1;
+    const parsed = parseInt(saved, 10);
+    return isNaN(parsed) ? 1 : parsed;
+  } catch {
+    return 1;
+  }
+};
+
+// localStorage-д data хадгална (File-ийг оруулахгүй)
+const saveDataToStorage = (data: Data) => {
+  try {
+    const toSave = {
+      firstname: data.firstname,
+      lastname: data.lastname,
+      username: data.username,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      // Date-ийг ISO string болгон хадгална
+      birthday: data.birthday ? data.birthday.toISOString() : undefined,
+      // profileImage: File object тул хадгалахгүй
+    };
+    localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(toSave));
+  } catch {
+    console.error("localStorage-д хадгалахад алдаа гарлаа");
+  }
+};
+
 const Formpage = () => {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<Data>({
@@ -42,6 +118,22 @@ const Formpage = () => {
     confirmPassword: "",
     profileImage: null,
   });
+
+  // Эхний render-д localStorage-аас уншина
+  useEffect(() => {
+    setStep(loadStepFromStorage());
+    setData(loadDataFromStorage());
+  }, []);
+
+  // data өөрчлөгдөх бүрт localStorage-д хадгална
+  useEffect(() => {
+    saveDataToStorage(data);
+  }, [data]);
+
+  // step өөрчлөгдөх бүрт localStorage-д хадгална
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_STEP, String(step));
+  }, [step]);
 
   return (
     <StepContext.Provider value={{ step, setStep, data, setData }}>

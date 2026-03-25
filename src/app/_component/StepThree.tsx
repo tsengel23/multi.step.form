@@ -117,7 +117,7 @@ const StepThree = () => {
         width: "100%",
       }}
     >
-      <div className="w-screen h-screen flex justify-center items-center bg-gray-100 border-2 border-red-500">
+      <div className="w-screen h-screen flex justify-center items-center bg-gray-100 ">
         <Card className="w-120 p-8 ">
           <div className=" ">
             <Form {...form}>

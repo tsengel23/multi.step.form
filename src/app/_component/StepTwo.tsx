@@ -49,7 +49,7 @@ const formSchema = z
       .string()
       .regex(
         /^[0-9+\-\s()]+$/,
-        "Утасны дугаар зөвхөн тоо, +, -, (, ) тэмдэгт агуулна"
+        "Утасны дугаар зөвхөн тоо, +, -, (, ) тэмдэгт агуулна",
       )
       .min(8, "Утасны дугаар хэт богино")
       .max(15, "Утасны дугаар хэт урт")
@@ -69,7 +69,7 @@ const formSchema = z
       .regex(/[@$!%*?&#]/, "Дор хаяж 1 тусгай тэмдэгт агуулна (@$!%*?&)")
       .refine(
         (val) => !val.includes("123"),
-        "123 гэх энгийн дарааллыг хэрэглэхгүй"
+        "123 гэх энгийн дарааллыг хэрэглэхгүй",
       ),
     confirmPassword: z.string().min(8),
   })
@@ -141,7 +141,7 @@ const StepTwo = () => {
         width: "100%",
       }}
     >
-      <div className="w-screen h-screen flex justify-center items-center bg-gray-100 border-2 border-red-500">
+      <div className="w-screen h-screen flex justify-center items-center bg-gray-100 ">
         <Card className="w-120 p-8 ">
           <div className=" ">
             <Form {...form}>
