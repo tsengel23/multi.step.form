@@ -11,7 +11,7 @@ import StepOne from "./_component/StepOne";
 import StepTwo from "./_component/StepTwo";
 import StepThree from "./_component/StepThree";
 import { Finish } from "./_component/Finish";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 type StepContextType = {
   step: number;
@@ -36,11 +36,8 @@ export type Data = {
   profileImage: File | null;
 };
 
-// localStorage-д хадгалах key нэрс
 const STORAGE_KEY_DATA = "multi_step_form_data";
 const STORAGE_KEY_STEP = "multi_step_form_step";
-
-// localStorage-аас data уншина (Date-ийг parse хийнэ, File-ийг skip)
 
 const loadDataFromStorage = (): Data => {
   const defaultData: Data = {
@@ -53,19 +50,14 @@ const loadDataFromStorage = (): Data => {
     confirmPassword: "",
     profileImage: null,
   };
-
   try {
     const saved = localStorage.getItem(STORAGE_KEY_DATA);
     if (!saved) return defaultData;
-
     const parsed = JSON.parse(saved);
-
     return {
       ...defaultData,
       ...parsed,
-      // birthday string байвал Date болгоно, байхгүй бол undefined
       birthday: parsed.birthday ? new Date(parsed.birthday) : undefined,
-      // File object localStorage-д хадгалах боломжгүй тул null болгоно
       profileImage: null,
     };
   } catch {
@@ -73,7 +65,6 @@ const loadDataFromStorage = (): Data => {
   }
 };
 
-// localStorage-аас step уншина
 const loadStepFromStorage = (): number => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY_STEP);
@@ -85,7 +76,6 @@ const loadStepFromStorage = (): number => {
   }
 };
 
-// localStorage-д data хадгална (File-ийг оруулахгүй)
 const saveDataToStorage = (data: Data) => {
   try {
     const toSave = {
@@ -96,9 +86,7 @@ const saveDataToStorage = (data: Data) => {
       phone: data.phone,
       password: data.password,
       confirmPassword: data.confirmPassword,
-      // Date-ийг ISO string болгон хадгална
       birthday: data.birthday ? data.birthday.toISOString() : undefined,
-      // profileImage: File object тул хадгалахгүй
     };
     localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(toSave));
   } catch {
@@ -108,6 +96,8 @@ const saveDataToStorage = (data: Data) => {
 
 const Formpage = () => {
   const [step, setStep] = useState(1);
+  const [isFinished, setIsFinished] = useState(false);
+  const [initialized, setInitialized] = useState(false); // ✅ ШИНЭ
   const [data, setData] = useState<Data>({
     firstname: "",
     lastname: "",
@@ -119,21 +109,35 @@ const Formpage = () => {
     profileImage: null,
   });
 
-  // Эхний render-д localStorage-аас уншина
+  // ✅ ӨӨРЧЛӨГДСӨН: step=4 хадгалагдсан байвал step=1-д буцна
   useEffect(() => {
-    setStep(loadStepFromStorage());
+    const savedStep = loadStepFromStorage();
+    if (savedStep === 4) {
+      setStep(1);
+    } else {
+      setStep(savedStep);
+    }
     setData(loadDataFromStorage());
+    setInitialized(true);
   }, []);
 
-  // data өөрчлөгдөх бүрт localStorage-д хадгална
+  // ✅ ӨӨРЧЛӨГДСӨН: initialized болсны дараа л хадгална
   useEffect(() => {
+    if (!initialized || isFinished) return;
     saveDataToStorage(data);
-  }, [data]);
+  }, [data, initialized]);
 
-  // step өөрчлөгдөх бүрт localStorage-д хадгална
+  // ✅ ӨӨРЧЛӨГДСӨН: initialized болсны дараа л ажиллана
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_STEP, String(step));
-  }, [step]);
+    if (!initialized) return;
+    if (step === 4) {
+      setIsFinished(true);
+      localStorage.removeItem(STORAGE_KEY_DATA);
+      localStorage.removeItem(STORAGE_KEY_STEP);
+    } else if (!isFinished) {
+      localStorage.setItem(STORAGE_KEY_STEP, String(step));
+    }
+  }, [step, initialized]);
 
   return (
     <StepContext.Provider value={{ step, setStep, data, setData }}>
